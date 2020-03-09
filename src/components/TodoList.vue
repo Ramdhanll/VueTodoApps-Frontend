@@ -9,37 +9,26 @@
       :key="todo.id" 
       :todo="todo" 
       :index="index"
-      :checkAll="!anyRemaining"
-      @removedTodo="removeTodo"
-      @finishEdit="finishEdit">
+      :checkAll="!anyRemaining">
 
     </TodoItem>
     </transition-group>
 
 
     <div class="extra-container">
-      <div>
-        <label>
-          <input type="checkbox" :checked="!anyRemaining" @change="checkAllTodos">
-          Check All
-        </label>
-      </div>
-      <div>{{ remaining }} items left</div>
+      <todo-check-all :anyRemaining="anyRemaining"/>
+      <todo-items-remaining :remaining="remaining" />
+
     </div>
 
     <div class="extra-container">
-      <div>
-        <button :class="{ active: filter == 'all' }" @click="filter = 'all'">All</button>
-        <button :class="{ active: filter == 'active' }" @click="filter = 'active'">Active</button>
-        <button :class="{ active: filter == 'completed' }" @click="filter = 'completed'">Completed</button>
-      </div>
-
-      <div>
+      <todo-filter :filter="filter" />
+      <!-- <div>
         <transition name="fade">
           <button v-if="showClearCompletedButton" @click="clearCompleted"> Clear Completed</button>
         </transition>
-      </div>
-
+      </div> -->
+      <todo-clear-completed :showClearCompletedButton="showClearCompletedButton" />
     </div>
 
   </div>
@@ -48,11 +37,19 @@
 <script>
 
 import TodoItem from './TodoItem'
+import TodoItemsRemaining from './TodoItemsRemaining'
+import TodoCheckAll from './TodoCheckAll'
+import TodoFilter from './TodoFilter'
+import TodoClearCompleted from './TodoClearCompleted'
 
 export default {
   name: 'todo-list',
   components: {
-    TodoItem
+    TodoItem,
+    TodoItemsRemaining,
+    TodoCheckAll,
+    TodoFilter,
+    TodoClearCompleted
   },
   data(){
     return {
@@ -76,6 +73,26 @@ export default {
         }
       ]
     }
+  },
+  created() {
+    this.$Fire.$on('removedTodo', (index) => this.removeTodo(index))
+    this.$Fire.$on('finishEdit', (data) => this.finishEdit(data))
+    this.$Fire.$on('checkAllTodos', () => this.checkAllTodos())
+    this.$Fire.$on('filterChanged', (filter) => {
+      this.filter = filter;
+      this.todosFiltered;
+      })
+    this.$Fire.$on('clearCompleted', () => this.clearCompleted())
+  },
+  beforeDestroy() {
+    this.$Fire.$off('removedTodo', (index) => this.removeTodo(index))
+    this.$Fire.$off('finishEdit', (data) => this.finishEdit(data))
+    this.$Fire.$off('checkAllTodos', () => this.checkAllTodos())
+    this.$Fire.$off('filterChanged', (filter) => {
+      this.filter = filter;
+      this.todosFiltered;
+      })
+    this.$Fire.$off('clearCompleted', () => this.clearCompleted())
   },
   computed: {
     remaining(){

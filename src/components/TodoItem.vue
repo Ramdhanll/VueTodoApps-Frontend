@@ -1,12 +1,28 @@
 <template>
   <div class="todo-item">
     <div class="todo-item-left">
-        <input type="checkbox" v-model="completed" @change="doneEdit">
-        <div v-if="!editing" @dblclick="editTodo" class="todo-item-label" :class="{ completed : completed }">{{ title }}</div>
-        <input v-else class="todo-item-edit" type="text" v-model="title" @blur="doneEdit" @keyup.enter="doneEdit" @keyup.esc="cancelEdit" v-focus>
+        <input type="checkbox" 
+          v-model="completed" 
+          @change="doneEdit">
+        <div v-if="!editing" 
+          @dblclick="editTodo" 
+          class="todo-item-label" 
+          :class="{ completed : completed }"> 
+          {{ title }} 
+        </div>
+        <input v-else class="todo-item-edit" 
+          type="text" 
+          v-model="title" 
+          @blur="doneEdit" 
+          @keyup.enter="doneEdit" 
+          @keyup.esc="cancelEdit" 
+          v-focus>
       </div>
-      <div class="remove-item" @click="removeTodo(index)">
-        &times;
+      <div>
+        <button @click="pluralize">Plural</button>
+        <span class="remove-item" @click="removeTodo(index)">
+          &times;
+        </span>
       </div>
   </div>
 </template>
@@ -56,7 +72,7 @@ export default {
   },
   methods: {
     removeTodo(index){
-      this.$emit('removedTodo', index)
+      this.$Fire.$emit('removedTodo', index)
     },
     editTodo(){
       this.beforeEditCache = this.title;
@@ -67,7 +83,7 @@ export default {
         this.title = this.beforeEditCache;
       }
       this.editing = false
-      this.$emit('finishEdit', {
+      this.$Fire.$emit('finishEdit', {
         'index': this.index,
         'todo': {
           'id': this.id,
@@ -76,13 +92,34 @@ export default {
           'editing': this.editing,
         },
       })
-
     },
     cancelEdit(){
       this.title = this.beforeEditCache;
       this.editing = false;
     },
-  }
+    pluralize(){
+      this.$Fire.$emit('pluralize');
+    },
+    handlePluralize(){
+      this.title = this.title + 's';
+      
+      this.$Fire.$emit('finishEdit', {
+        'index': this.index,
+        'todo': {
+          'id': this.id,
+          'title': this.title,
+          'completed': this.completed,
+          'editing': this.editing,
+        },
+      })
+    }
+  },
+  created() {
+    this.$Fire.$on('pluralize', this.handlePluralize)
+  },
+  beforeDestroy() {
+    this.$Fire.$off('pluralize', this.handlePluralize)
+  },
 }
 </script>
 
