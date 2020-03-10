@@ -9,15 +9,14 @@
 <script>
 export default {
   name: 'todo-clear-completed',
-  props: {
-    showClearCompletedButton: {
-      type: Boolean,
-      required: true
+  computed: {
+    showClearCompletedButton() {
+      return this.$store.getters.showClearCompletedButton;
     }
   },
   methods: {
     clearCompleted(){
-      this.$Fire.$emit('clearCompleted');
+      this.$store.dispatch('clearCompleted')
     }
   },
 }
