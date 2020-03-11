@@ -22,7 +22,7 @@
     </div>
 
     <div class="extra-container">
-      <todo-filter :filter="filter" />
+      <todo-filter/>
       <todo-clear-completed/>
     </div>
 
@@ -50,24 +50,10 @@ export default {
     return {
       newTodo : '',
       idForTodo : 3,
-      beforeEditCache : '',
-      filter : 'all',
-      todos: [
-        {
-          'id' : 1,
-          'title' : 'Finish Vue Screencast',
-          'completed' : false,
-          'editing' : false
-        },
-        {
-          'id' : 2,
-          'title' : 'Take Over World',
-          'completed' : false,
-          'editing' : false
-
-        }
-      ]
     }
+  },
+  created(){
+    this.$store.dispatch('retriveTodos');
   },
   computed: {
     remaining(){
