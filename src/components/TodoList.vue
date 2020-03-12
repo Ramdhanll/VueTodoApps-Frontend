@@ -163,7 +163,7 @@ export default {
     font-size: 14px;
     background-color: white;
     appearance: none;
-
+    padding: 4px;
     &:hover {
       background: rgb(0, 255, 0);
     }
