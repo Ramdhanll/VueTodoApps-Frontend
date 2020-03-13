@@ -9,12 +9,35 @@ Vue.config.productionTip = false
 
 Vue.use(VueRouter)
 
-
-
-
 const router = new VueRouter({
   mode: 'history',
   routes 
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    // this route requires auth, check if logged in
+    // if not, redirect to login page.
+    if (!store.getters.loggedIn) {
+      next({
+        path: 'login',
+      })
+    } else {
+      next()
+    }
+  } else if (to.matched.some(record => record.meta.requiresVisitor)) {
+    // this route requires auth, check if logged in
+    // if not, redirect to login page.
+    if (store.getters.loggedIn) {
+      next({
+        path: 'todo',
+      })
+    } else {
+      next()
+    }
+  }  else {
+    next() // make sure to always call next()!
+  }
 })
 
 new Vue({
