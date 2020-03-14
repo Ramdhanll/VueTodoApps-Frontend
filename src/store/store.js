@@ -76,10 +76,15 @@ export const store = new Vuex.Store({
     },
     destroyToken(state){
       state.token = null;
+    },
+    clearTodos(state){
+      state.todos = [];
     }
   },
   actions: {
     retriveTodos(context){
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.token;
+
       axios.get('/todos')
         .then(response => {
           context.commit('retriveTodos', response.data);
@@ -208,6 +213,9 @@ export const store = new Vuex.Store({
         })
         
       })
+    },
+    clearTodos(context){
+      context.commit('clearTodos');
     }
 
 
