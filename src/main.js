@@ -3,6 +3,8 @@ import VueRouter from 'vue-router'
 import routes from './routes'
 import Master from './components/layouts/Master'
 import {store} from './store/store'
+import { ValidationProvider,ValidationObserver, extend } from 'vee-validate';
+import { required, email } from 'vee-validate/dist/rules';
 
 Vue.prototype.$Fire = new Vue();
 Vue.config.productionTip = false
@@ -39,6 +41,35 @@ router.beforeEach((to, from, next) => {
     next() // make sure to always call next()!
   }
 })
+
+Vue.filter('capitalize', function (value) {
+  if (!value) return ''
+  value = value.toString()
+  return value.charAt(0).toUpperCase() + value.slice(1)
+})
+
+
+// Add a rule.
+// No message specified.
+extend('email', email);
+
+// Override the default message.
+extend('required', {
+  ...required,
+  message: 'This field is required'
+});
+
+extend('password', {
+  validate: value => value.length >= 8,
+  message: 'The password field must be at least 6 characters'
+})
+
+// Register it globally
+Vue.component('ValidationProvider', ValidationProvider);
+Vue.component('ValidationObserver', ValidationObserver);
+
+
+
 
 new Vue({
   render: h => h(Master),

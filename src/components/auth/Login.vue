@@ -3,6 +3,8 @@
     <h2 class="login-heading">Login</h2>
     <form action="#" @submit.prevent="login">
 
+      <div v-if="serverError" class="server-error">{{ serverError }}</div>
+
       <div class="form-control">
         <label for="email">Username/Email</label>
         <input type="email" name="username" id="username" class="login-input" v-model="username">
@@ -27,7 +29,8 @@ export default {
   data(){
     return{
       username: '',
-      password: ''
+      password: '',
+      serverError: ''
     }
   },
   methods: {
@@ -39,6 +42,10 @@ export default {
       .then(response => {
         this.$router.push({name: 'todo'})
         response;
+      })
+      .catch(error => {
+        this.serverError = error.response.data;
+        this.password = '';
       });
     }
   },
@@ -46,5 +53,12 @@ export default {
 </script>
 
 <style>
-
+  .server-error {
+        margin-bottom: 12px;
+        font-size: 16px;
+        padding: 10px 16px;
+        color: #A94442;
+        background: #F3DEDE;
+        border-radius: 4px;
+      }
 </style>

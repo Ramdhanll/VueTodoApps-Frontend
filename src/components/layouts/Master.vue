@@ -98,8 +98,11 @@ export default {
     color: white;
     border-radius: 3px;
     cursor: pointer;
+    margin-top: 20px;
     &:hover {
       background: darken(#60BD4F, 10%);
     }
+
+    
   }
 </style>

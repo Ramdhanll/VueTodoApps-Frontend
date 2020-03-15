@@ -1,5 +1,8 @@
 <template>
   <div>
+  <div class="name-container">
+    Welcome, {{ name | capitalize }}
+  </div>
     <input type="text" 
       class="todo-input" 
       placeholder="What needs to be done"
@@ -50,10 +53,15 @@ export default {
     return {
       newTodo : '',
       idForTodo : 3,
+      name: ''
     }
   },
   created(){
     this.$store.dispatch('retriveTodos');
+    this.$store.dispatch('retriveName')
+      .then(response => {
+        this.name = response.data.name;
+      });
   },
   computed: {
     remaining(){
@@ -157,6 +165,10 @@ export default {
     border-top: 1px solid lightgrey;
     padding-top: 14px;
     margin-bottom: 14px;
+  }
+
+  .name-container {
+    margin-bottom: 16px;
   }
 
   button {

@@ -1,39 +1,62 @@
 <template>
   <div class="login-form">
     <h2 class="login-heading">Register</h2>
-    <form action="#" @submit.prevent="register">
 
-      <div class="form-control">
-        <label for="name">Name</label>
-        <input type="text" name="name" id="name" class="login-input" v-model="name">
+    <div v-if="serverErrors" class="server-error">
+      <div v-for="(serverError, index) in serverErrors" :key="index">
+        {{ serverError[0] }}
       </div>
+    </div>
 
-      <div class="form-control">
-        <label for="email">Email</label>
-        <input type="email" name="email" id="email" class="login-input" v-model="email">
-      </div>
+    <ValidationObserver v-slot="{handleSubmit}">
+      <form @submit.prevent="handleSubmit(register)">
+        <ValidationProvider rules="required" v-slot="{ errors }" class="form-control">
+          <label for="name">Name</label>
+          <input type="text" 
+                  name="name" 
+                  id="name" 
+                  class="login-input" 
+                  v-model="name">
+          <span class="msg-pass">{{ errors[0] }}</span>
+        </ValidationProvider>
 
-      <div class="form-control mb-more">
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password" class="login-input" v-model="password">
-      </div>
+        <ValidationProvider rules="email|required" v-slot="{ errors }" class="form-control">
+          <label for="email">Email</label>
+          <input type="text" 
+                  name="email" id="email" 
+                  class="login-input" 
+                  v-model="email">
+        <span class="msg-pass">{{ errors[0] }}</span>
+        </ValidationProvider>
 
-      <div class="form-control">
-        <button type="submit" class="btn-submit">Create Account</button>
-      </div>
+        <ValidationProvider rules="password|required" v-slot="{ errors }"  class="form-control mb-more">
+          <label for="password">Password</label>
+          <input type="password" 
+                  name="password" 
+                  id="password" 
+                  class="login-input" 
+                  v-model="password">
+        <span class="msg-pass">{{ errors[0] }}</span>
+        </ValidationProvider>
 
+        <div class="form-control">
+          <button type="submit" :disabled="invalid" class="btn-submit">Create Account</button>
+        </div>
     </form>
+      </ValidationObserver>
   </div>
 </template>
 
 <script>
+
 export default {
   name:'register',
   data(){
     return{
       name: '',
       email: '',
-      password: ''
+      password: '',
+      serverErrors: ''
     }
   },
   methods: {
@@ -47,12 +70,26 @@ export default {
         this.$router.push({name: 'login'})
         response;
       })
-      .catch(err => console.log(err))
+      .catch(error => {
+        this.serverErrors =  error.response.data.errors;
+      });
     }
   },
 }
 </script>
 
 <style>
+.msg-pass {
+  font-size: 20px;
+  color: red;
+}
 
+.form-control {
+    margin-bottom: 16px;
+  }
+
+.input-error {
+  font-size: 16px;
+  color: #a94442;
+}
 </style>
