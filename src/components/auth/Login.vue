@@ -1,5 +1,5 @@
 <template>
-  <div class="login-form">
+  <div class="page-wrapper login-form">
     <h2 class="login-heading">Login</h2>
     <form action="#" @submit.prevent="login">
 
@@ -16,7 +16,12 @@
       </div>
 
       <div class="form-control">
-        <button type="submit" class="btn-submit">Login</button>
+        <button type="submit" class="btn-submit" :disabled="loading">
+          <div class="lds-ring-container" v-if="loading">
+            <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+          </div>
+          Login
+        </button>
       </div>
 
     </form>
@@ -26,24 +31,42 @@
 <script>
 export default {
   name:'login',
+  props: {
+    dataSuccessMessage: {
+      type: Boolean,
+    }
+  },
+  created() {
+    if(this.dataSuccessMessage == true){
+      window.toast.fire({
+      icon: 'success',
+      title: 'Registered successfully'
+    })
+      this.dataSuccessMessage = false;
+    }
+  },
   data(){
     return{
       username: '',
       password: '',
-      serverError: ''
+      serverError: '',
+      loading: false
     }
   },
   methods: {
     login(){
+      this.loading = true;
       this.$store.dispatch('retrieveToken', {
         username: this.username,
         password: this.password
       })
       .then(response => {
+        this.loading = false;
         this.$router.push({name: 'todo'})
         response;
       })
       .catch(error => {
+        this.loading = false;
         this.serverError = error.response.data;
         this.password = '';
       });

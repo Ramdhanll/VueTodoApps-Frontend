@@ -105,7 +105,6 @@ export default {
 
 <style lang="scss"> // lang="scss" => package scss yang baru dipasang "npm install sass-loader node-sass --save"
 
-  @import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css');
 
   .todo-input {
     width: 100%;

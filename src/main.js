@@ -5,10 +5,10 @@ import Master from './components/layouts/Master'
 import {store} from './store/store'
 import { ValidationProvider,ValidationObserver, extend } from 'vee-validate';
 import { required, email } from 'vee-validate/dist/rules';
+import Swal from 'sweetalert2'
 
 Vue.prototype.$Fire = new Vue();
 Vue.config.productionTip = false
-
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -68,8 +68,20 @@ extend('password', {
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.component('ValidationObserver', ValidationObserver);
 
-
-
+// Swal
+window.swal = Swal;
+const Toast = Swal.mixin({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  onOpen: (toast) => {
+    toast.addEventListener('mouseenter', Swal.stopTimer)
+    toast.addEventListener('mouseleave', Swal.resumeTimer)
+  }
+})
+window.toast = Toast;
 
 new Vue({
   render: h => h(Master),

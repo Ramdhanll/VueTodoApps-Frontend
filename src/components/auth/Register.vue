@@ -1,6 +1,8 @@
 <template>
-  <div class="login-form">
+  <div class="page-wrapper login-form">
     <h2 class="login-heading">Register</h2>
+
+    <!-- <div v-if="successMessage" class="success-message">{{successMessage}}</div> -->
 
     <div v-if="serverErrors" class="server-error">
       <div v-for="(serverError, index) in serverErrors" :key="index">
@@ -40,7 +42,7 @@
         </ValidationProvider>
 
         <div class="form-control">
-          <button type="submit" :disabled="invalid" class="btn-submit">Create Account</button>
+          <button type="submit" class="btn-submit">Create Account</button>
         </div>
     </form>
       </ValidationObserver>
@@ -56,7 +58,7 @@ export default {
       name: '',
       email: '',
       password: '',
-      serverErrors: ''
+      serverErrors: '',
     }
   },
   methods: {
@@ -67,29 +69,39 @@ export default {
         password: this.password
       })
       .then(response => {
-        this.$router.push({name: 'login'})
+        this.successMessage = "Registered Successfully"
+        this.$router.push({name: 'login', params: {
+            dataSuccessMessage: true}
+            })
         response;
       })
       .catch(error => {
         this.serverErrors =  error.response.data.errors;
       });
     }
-  },
+  }
 }
 </script>
 
-<style>
+<style lang="scss">
+
 .msg-pass {
   font-size: 20px;
   color: red;
 }
 
-.form-control {
-    margin-bottom: 16px;
-  }
 
 .input-error {
   font-size: 16px;
   color: #a94442;
+}
+
+.success-message {
+  background-color: #dff0d8;
+  color: #3c763d;
+  margin-bottom: 12px;
+  font-size: 16px;
+  padding: 10px 16px;
+  border-radius: 4px;
 }
 </style>
